@@ -11,9 +11,10 @@ CREATE TABLE public.segment
 
 CREATE TABLE public.users_in_segm
 (
-    id serial primary key ,
-    user_id int,
-    segment_id int,
+    user_id int ,
+    segment_id int ,
+    ttl DATE,
+    CONSTRAINT id PRIMARY KEY (user_id, segment_id),
     FOREIGN KEY (user_id)  REFERENCES public.user(user_id),
     FOREIGN KEY (segment_id)  REFERENCES public.segment(segment_id)
 );

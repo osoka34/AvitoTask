@@ -4,6 +4,7 @@ const (
 	UserDB         string = " public.user "
 	SegmentDB      string = " public.segment "
 	UsersInSegment string = " public.users_in_segm "
+	StatisticsDB   string = " public.statistics "
 )
 
 const (
@@ -15,6 +16,8 @@ const (
 	InsertUserInSegError
 	DeleteUserFromSegError
 	GetAllGegNamesByUidError
+	InsertStatError
+	GetDataForCsvError
 )
 
 const (

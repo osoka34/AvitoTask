@@ -3,7 +3,10 @@ package usecase
 import (
 	"AvitoTask/config"
 	"AvitoTask/internal/s_constant"
+	"AvitoTask/internal/statistics"
 	"AvitoTask/internal/users_in_segm"
+	"AvitoTask/pkg/utils"
+	"github.com/gofiber/fiber/v2/log"
 	"go.uber.org/zap"
 )
 
@@ -11,17 +14,20 @@ type UsersInSegUsecase struct {
 	repo   users_in_segm.Repository
 	logger *zap.SugaredLogger
 	cfg    *config.Config
+	statUC statistics.Usecase
 }
 
-func NewUsersInSegUsecase(repo users_in_segm.Repository, logger *zap.SugaredLogger, cfg *config.Config) users_in_segm.Usecase {
+func NewUsersInSegUsecase(repo users_in_segm.Repository, logger *zap.SugaredLogger, cfg *config.Config, statUC statistics.Usecase) users_in_segm.Usecase {
 	return &UsersInSegUsecase{
-		repo: repo, logger: logger, cfg: cfg,
+		repo: repo, logger: logger, cfg: cfg, statUC: statUC,
 	}
 }
 
 func (u *UsersInSegUsecase) GetQueryParams(params *users_in_segm.UserInSegQueryParams) (*users_in_segm.UsersInSegResponse, error) {
 
 	if params.Insert {
+		log.Info(params)
+		log.Info(len(params.Ttl))
 		response, err := u.InsertUserInSegments(&users_in_segm.InsertUserInSegParams{
 			UserId:       params.UserId,
 			Ttl:          params.Ttl,
@@ -46,10 +52,23 @@ func (u *UsersInSegUsecase) GetQueryParams(params *users_in_segm.UserInSegQueryP
 func (u *UsersInSegUsecase) InsertUserInSegments(params *users_in_segm.InsertUserInSegParams) (*users_in_segm.UsersInSegResponse, error) {
 	var response users_in_segm.UsersInSegResponse
 
+	params.Ttl = utils.AddNulls(params.Ttl)
+
 	if err := u.repo.InsertUserInSegments(params); err != nil {
 		response.ErrCode = s_constant.InsertUserInSegError
 		response.Success = false
 		response.Description = "error in adding segments to user"
+		return &response, err
+	}
+	if err := u.statUC.AddRows(&statistics.InsertParams{
+		Segment_names: params.SegmentNames,
+		UserId:        params.UserId,
+		In:            true,
+		Time:          utils.GetMoscowTime(),
+	}); err != nil {
+		response.ErrCode = s_constant.InsertStatError
+		response.Success = false
+		response.Description = "error in adding stats"
 		return &response, err
 	}
 
@@ -65,6 +84,17 @@ func (u *UsersInSegUsecase) DeleteUserFromSegments(params *users_in_segm.DeleteU
 		response.ErrCode = s_constant.DeleteUserFromSegError
 		response.Success = false
 		response.Description = "error in deleting segments from user"
+		return &response, err
+	}
+	if err := u.statUC.AddRows(&statistics.InsertParams{
+		Segment_names: params.SegmentNames,
+		UserId:        params.UserId,
+		In:            true,
+		Time:          utils.GetMoscowTime(),
+	}); err != nil {
+		response.ErrCode = s_constant.InsertStatError
+		response.Success = false
+		response.Description = "error in adding stats"
 		return &response, err
 	}
 

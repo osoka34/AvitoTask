@@ -5,6 +5,7 @@ import (
 	"AvitoTask/internal/users_in_segm"
 	"AvitoTask/pkg/utils"
 	"fmt"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jmoiron/sqlx"
 )
@@ -23,15 +24,16 @@ func (p *postgresRepository) InsertUserInSegments(params *users_in_segm.InsertUs
 		query = `
 		INSERT INTO %[1]s 
 		    (user_id, segment_id, ttl)
-		VALUES
-			%[2]s;
+		VALUES %[2]s;
 		`
 		values []interface{} = append([]interface{}{params.UserId}, append(params.SegmentNames, params.Ttl...)...)
 	)
-
 	query = fmt.Sprintf(query, s_constant.UsersInSegment,
 		utils.StringSliceToDollarPsqlArrayWithTTL(len(params.SegmentNames), params.Ttl))
 
+	log.Info(query)
+	log.Info("values:", values)
+	log.Info("len:", len(values))
 	con, err := p.db.Query(query, values...)
 	if err != nil {
 		return err

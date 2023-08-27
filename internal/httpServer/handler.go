@@ -20,6 +20,10 @@ import (
 	usersInSegHttp "AvitoTask/internal/users_in_segm/delivery/http"
 	usersInSegRepository "AvitoTask/internal/users_in_segm/repository"
 	usersInSegUsecase "AvitoTask/internal/users_in_segm/usecase"
+
+	statHttp "AvitoTask/internal/statistics/delivery/http"
+	statRepository "AvitoTask/internal/statistics/repository"
+	statUsecase "AvitoTask/internal/statistics/usecase"
 )
 
 func (s *Server) MapHandlers(app *fiber.App, logger *zap.SugaredLogger) error {
@@ -42,18 +46,21 @@ func (s *Server) MapHandlers(app *fiber.App, logger *zap.SugaredLogger) error {
 	segmentRepo := segmentRepository.NewPostgresRepository(db, poolDb)
 	userRepo := userRepository.NewPostgresRepository(db, poolDb)
 	usersInSegRepo := usersInSegRepository.NewPostgresRepository(db, poolDb)
+	statRepo := statRepository.NewPostgresRepository(db, poolDb)
 
 	// -------------------------------------------------------------------------------------
 
+	statUC := statUsecase.NewStatUsecase(statRepo, logger, s.cfg)
 	segmentUC := segmentUsecase.NewSegmentUsecase(segmentRepo, logger, s.cfg)
 	userUC := userUsecase.NewUserUsecase(userRepo, logger, s.cfg)
-	usersInSegUC := usersInSegUsecase.NewUsersInSegUsecase(usersInSegRepo, logger, s.cfg)
+	usersInSegUC := usersInSegUsecase.NewUsersInSegUsecase(usersInSegRepo, logger, s.cfg, statUC)
 
 	// -------------------------------------------------------------------------------------
 
 	segmentHandlers := segmentHttp.NewSegmentHandler(segmentUC, s.cfg, logger)
 	userHandlers := userHttp.NewUserHandler(userUC, s.cfg, logger)
 	usersInSegHandlers := usersInSegHttp.NewUsersInSegHandler(usersInSegUC, s.cfg, logger)
+	statHandlers := statHttp.NewStatHandler(statUC, s.cfg, logger)
 
 	// -------------------------------------------------------------------------------------
 
@@ -72,6 +79,7 @@ func (s *Server) MapHandlers(app *fiber.App, logger *zap.SugaredLogger) error {
 	segmentHttp.MapSegmentRoutes(app, segmentHandlers)
 	userHttp.MapUserRoutes(app, userHandlers)
 	usersInSegHttp.MapUsersInSegRoutes(app, usersInSegHandlers)
+	statHttp.MapStatRoutes(app, statHandlers)
 
 	// -------------------------------------------------------------------------------------
 

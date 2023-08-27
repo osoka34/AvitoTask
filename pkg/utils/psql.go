@@ -33,15 +33,38 @@ func StringSliceToDollarPsqlArrayWithTTL(len_ int, Ttl []interface{}) string {
 
 	for i := 1; i < len_+1; i++ {
 		num = len_ + i + 1 - count
-		if Ttl[i-1] != "" {
-			values = append(values,
-				fmt.Sprintf("($1, (SELECT segment_id FROM public.segment WHERE segment_name = $%d), $%d)", i+1, num))
-
-		} else {
-			values = append(values,
-				fmt.Sprintf("($1, (SELECT segment_id FROM public.segment WHERE segment_name = $%d), NULL)", i+1))
-			count += 1
-		}
+		//if Ttl[i-1] != "" {
+		//	values = append(values,
+		//		fmt.Sprintf("($1, (SELECT segment_id FROM public.segment WHERE segment_name = $%d), $%d)", i+1, num))
+		//
+		//} else {
+		//	values = append(values,
+		//		fmt.Sprintf("($1, (SELECT segment_id FROM public.segment WHERE segment_name = $%d), NULL)", i+1))
+		//	count += 1
+		//}
+		values = append(values,
+			fmt.Sprintf("\n ($1, (SELECT segment_id FROM public.segment WHERE segment_name = $%d), $%d)", i+1, num))
 	}
 	return strings.Join(values, ", ")
+}
+
+func InserrtRowsDollarParams(len_ int) string {
+
+	var values []string
+
+	for i := 1; i < len_+1; i++ {
+		values = append(values,
+			fmt.Sprintf("($1, $%d, $2, $3)", i+3))
+	}
+
+	return " (" + strings.Join(values, ", ") + ") "
+}
+
+func AddNulls(ttl []interface{}) []interface{} {
+	for i, val := range ttl {
+		if val == "" {
+			ttl[i] = "NULL"
+		}
+	}
+	return ttl
 }

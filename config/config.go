@@ -10,6 +10,7 @@ type Config struct {
 	Postgres PostgresConfig
 	Logger   Logger
 	Deploy   Deploy
+	Stat     Statisctics
 }
 
 type Logger struct {
@@ -39,6 +40,10 @@ type ServerConfig struct {
 	AppVersion string `json:"appVersion"`
 	Host       string `json:"host" validate:"required"`
 	Port       string `json:"port" validate:"required"`
+}
+
+type Statisctics struct {
+	FilePath string `yaml:"file_path"`
 }
 
 func LoadConfig() (*viper.Viper, error) {

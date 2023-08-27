@@ -1,0 +1,21 @@
+logger:
+  level: "debug"
+  inFile: "logs/app.log"
+  development: false
+  disableCaller: false
+  disableStacktrace: true
+  encoding: "json"
+
+Postgres:
+  host: "localhost"
+  port: "5577"
+  user: "postgres"
+  password: "postgres"
+  DBName: "postgres"
+  pgDriver: "pgx"
+
+
+Server:
+  AppVersion: "1.0.0"
+  Host: "0.0.0.0"
+  Port: "11000"

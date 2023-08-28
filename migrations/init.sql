@@ -19,6 +19,17 @@ CREATE TABLE public.users_in_segm
     FOREIGN KEY (segment_id)  REFERENCES public.segment(segment_id)
 );
 
+
+CREATE TABLE public.statistics
+(
+    id SERIAL PRIMARY KEY,
+    user_id int NOT NULL,
+    segment_name VARCHAR(100) NOT NULL,
+    date_event DATE,
+    in_event bool,
+    FOREIGN KEY (user_id)  REFERENCES public.user(user_id)
+);
+
 -- Вставка значений в таблицу public.user
 INSERT INTO public.user (user_id, user_name)
 VALUES

@@ -34,7 +34,6 @@ func (h *UsersInSegHandler) GetAllSegByUserId() fiber.Handler {
 			h.logger.Errorf("err is: %v", err)
 			return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
 		}
-
 		toFront, err := h.uc.GetAllSegByUserId(&params)
 		if err != nil {
 			h.logger.Errorf("err is: %v", err)

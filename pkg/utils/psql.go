@@ -45,7 +45,7 @@ func StringSliceToDollarPsqlArrayWithTTL(len_ int, Ttl []interface{}) string {
 		values = append(values,
 			fmt.Sprintf("\n ($1, (SELECT segment_id FROM public.segment WHERE segment_name = $%d), $%d)", i+1, num))
 	}
-	return strings.Join(values, ", ")
+	return strings.Join(values, ", \n")
 }
 
 func InserrtRowsDollarParams(len_ int) string {
@@ -57,13 +57,13 @@ func InserrtRowsDollarParams(len_ int) string {
 			fmt.Sprintf("($1, $%d, $2, $3)", i+3))
 	}
 
-	return " (" + strings.Join(values, ", ") + ") "
+	return strings.Join(values, ", ")
 }
 
 func AddNulls(ttl []interface{}) []interface{} {
 	for i, val := range ttl {
 		if val == "" {
-			ttl[i] = "NULL"
+			ttl[i] = sql.NullTime{Valid: false}
 		}
 	}
 	return ttl

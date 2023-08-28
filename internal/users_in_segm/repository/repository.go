@@ -5,7 +5,6 @@ import (
 	"AvitoTask/internal/users_in_segm"
 	"AvitoTask/pkg/utils"
 	"fmt"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jmoiron/sqlx"
 )
@@ -22,18 +21,15 @@ func NewPostgresRepository(db *sqlx.DB, poolDb *pgxpool.Pool) users_in_segm.Repo
 func (p *postgresRepository) InsertUserInSegments(params *users_in_segm.InsertUserInSegParams) error {
 	var (
 		query = `
-		INSERT INTO %[1]s 
-		    (user_id, segment_id, ttl)
-		VALUES %[2]s;
+			INSERT INTO %[1]s 
+				(user_id, segment_id, ttl)
+			VALUES %[2]s;
 		`
 		values []interface{} = append([]interface{}{params.UserId}, append(params.SegmentNames, params.Ttl...)...)
 	)
 	query = fmt.Sprintf(query, s_constant.UsersInSegment,
 		utils.StringSliceToDollarPsqlArrayWithTTL(len(params.SegmentNames), params.Ttl))
 
-	log.Info(query)
-	log.Info("values:", values)
-	log.Info("len:", len(values))
 	con, err := p.db.Query(query, values...)
 	if err != nil {
 		return err
@@ -77,7 +73,6 @@ func (p *postgresRepository) GetAllSegByUserId(params *users_in_segm.SelectBy) (
 	)
 
 	query = fmt.Sprintf(query, s_constant.SegmentDB, s_constant.UsersInSegment)
-
 	if err := p.db.Select(&dataRaw, query, values...); err != nil {
 		return dataRaw, err
 	}

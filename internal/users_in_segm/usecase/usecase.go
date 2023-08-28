@@ -6,7 +6,6 @@ import (
 	"AvitoTask/internal/statistics"
 	"AvitoTask/internal/users_in_segm"
 	"AvitoTask/pkg/utils"
-	"github.com/gofiber/fiber/v2/log"
 	"go.uber.org/zap"
 )
 
@@ -26,8 +25,6 @@ func NewUsersInSegUsecase(repo users_in_segm.Repository, logger *zap.SugaredLogg
 func (u *UsersInSegUsecase) GetQueryParams(params *users_in_segm.UserInSegQueryParams) (*users_in_segm.UsersInSegResponse, error) {
 
 	if params.Insert {
-		log.Info(params)
-		log.Info(len(params.Ttl))
 		response, err := u.InsertUserInSegments(&users_in_segm.InsertUserInSegParams{
 			UserId:       params.UserId,
 			Ttl:          params.Ttl,
@@ -89,7 +86,7 @@ func (u *UsersInSegUsecase) DeleteUserFromSegments(params *users_in_segm.DeleteU
 	if err := u.statUC.AddRows(&statistics.InsertParams{
 		Segment_names: params.SegmentNames,
 		UserId:        params.UserId,
-		In:            true,
+		In:            false,
 		Time:          utils.GetMoscowTime(),
 	}); err != nil {
 		response.ErrCode = s_constant.InsertStatError

@@ -32,7 +32,6 @@ func (p *postgresRepository) AddRows(params *statistics.InsertParams) error {
 	)
 
 	query = fmt.Sprintf(query, s_constant.StatisticsDB, utils.InserrtRowsDollarParams(len(params.Segment_names)))
-
 	con, err := p.db.Query(query, values...)
 	if err != nil {
 		return err

@@ -117,3 +117,27 @@ func (u *UsersInSegUsecase) GetAllSegByUserId(params *users_in_segm.SelectBy) (*
 
 	return &response, nil
 }
+
+func (u *UsersInSegUsecase) DeleteByTtl() error {
+
+	if err := u.repo.DeleteByTtl(); err != nil {
+		u.logger.Errorf("error in deleting users from segments by ttl: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (u *UsersInSegUsecase) CountUsersWithExpiredTtl() (bool, error) {
+
+	count, err := u.repo.CountUsersWithExpiredTtl()
+	if err != nil {
+		u.logger.Errorf("error in counting users with expired ttl: %v", err)
+		return false, err
+	}
+	if count == 0 {
+		return false, nil
+	} else {
+		return true, nil
+	}
+}

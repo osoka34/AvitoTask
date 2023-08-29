@@ -23,7 +23,7 @@ func main() {
 	logger := logger.NewLogger(cfg).Sugar()
 	defer logger.Sync()
 
-	logger.Info("Hello from Zap!")
+	logger.Infof("file path: %s", cfg.Statistic.FilePath)
 
 	s := httpServer.NewServer(cfg, logger)
 	if err = s.Run(); err != nil {

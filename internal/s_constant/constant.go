@@ -1,5 +1,7 @@
 package s_constant
 
+import "time"
+
 const (
 	UserDB         string = " public.user "
 	SegmentDB      string = " public.segment "
@@ -18,9 +20,15 @@ const (
 	GetAllGegNamesByUidError
 	InsertStatError
 	GetDataForCsvError
+	DeleteByTtlError
+	CreateSegmentWithAutoAddError
 )
 
 const (
 	SUpdateSegmentError = "No rows to update"
 	SDeleteSegmentError = "No rows to delete"
+)
+
+const (
+	DelayForDeleteByTtl time.Duration = 5
 )

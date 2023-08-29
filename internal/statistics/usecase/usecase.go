@@ -61,9 +61,7 @@ func (u *StatUsecase) SelectForCsv(params *statistics.SelectParams) (*statistics
 		response.ErrCode = s_constant.GetDataForCsvError
 		return &response, err
 	}
-	//log.Info(u.cfg.Stat.FilePath)
-	//log.Info(u.cfg.Logger.InFile)
-	file, err := os.Create(u.cfg.Logger.InFile)
+	file, err := os.Create(u.cfg.Statistic.FilePath)
 	if err != nil {
 		response.Success = false
 		response.Description = "error in SelectForCsv"

@@ -25,6 +25,6 @@ func (h *StatHandler) GetCsv() fiber.Handler {
 		ctx.Set(fiber.HeaderContentDisposition, fmt.Sprintf(`attachment; filename="%s.csv"`, "data"))
 		ctx.Set(fiber.HeaderContentType, fiber.MIMEOctetStream)
 
-		return ctx.SendFile(h.cfg.Logger.InFile)
+		return ctx.SendFile(h.cfg.Statistic.FilePath)
 	}
 }

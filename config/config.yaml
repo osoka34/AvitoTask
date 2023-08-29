@@ -1,13 +1,13 @@
 logger:
   level: "debug"
-  inFile: "/Users/alexander/GolandProjects/AvitoTask/logs/data.csv"
+  inFile: "./logs/app.log"
   development: false
   disableCaller: false
   disableStacktrace: true
   encoding: "json"
 
-statistics:
-  file_path: "/Users/alexander/GolandProjects/AvitoTask/logs/data.csv"
+statistic:
+  filePath: "/Users/alexander/GolandProjects/AvitoTask/logs/data.csv"
 
 Postgres:
   host: "localhost"

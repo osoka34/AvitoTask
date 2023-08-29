@@ -5,4 +5,5 @@ type Repository interface {
 	UpdateSegmentName(params *UpdateSegmentParams) error
 	DeleteSegmentByName(params *DeleteSegmParams) error
 	GetAmountInSegment(params *GetSegmentParams) (int, error)
+	CreateSegmentWithAutoAdd(params *CreateSegmentParams) error
 }

@@ -83,3 +83,51 @@ func (p *postgresRepository) GetAllSegByUserId(params *users_in_segm.SelectBy) (
 
 	return dataRaw, nil
 }
+
+func (p *postgresRepository) DeleteByTtl() error {
+	var (
+		query = `
+		WITH deleted_rows AS (
+			DELETE FROM %[1]s
+			WHERE ttl <= $1
+			RETURNING user_id, segment_id, ttl
+		)
+		INSERT INTO %[2]s (user_id, segment_name, date_event, in_event)
+		SELECT d.user_id, s.segment_name, $1, false
+		FROM deleted_rows d
+		JOIN public.segment s ON d.segment_id = s.segment_id;
+			`
+
+		values []any = []any{
+			utils.GetMoscowTime(),
+		}
+	)
+
+	query = fmt.Sprintf(query, s_constant.UsersInSegment, s_constant.StatisticsDB)
+
+	con, err := p.db.Query(query, values...)
+	if err != nil {
+		return err
+	}
+
+	return utils.CloseConnection(con)
+}
+
+func (p *postgresRepository) CountUsersWithExpiredTtl() (int, error) {
+	var (
+		count int
+		query = `
+			SELECT COALESCE(COUNT(ttl),0) as count FROM %[1]s WHERE ttl <= $1;
+		`
+		values []any = []any{
+			utils.GetMoscowTime(),
+		}
+	)
+
+	query = fmt.Sprintf(query, s_constant.UsersInSegment)
+	if err := p.db.QueryRow(query, values...).Scan(&count); err != nil {
+		return count, err
+	}
+
+	return count, nil
+}

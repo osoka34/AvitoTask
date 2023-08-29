@@ -9,6 +9,7 @@ type InsertUserInSegParams struct {
 type DeleteUserFromSegParams struct {
 	UserId       int           `json:"user_id"`
 	SegmentNames []interface{} `json:"segment_names"`
+	Ttl          string        `json:"ttl,omitempty"`
 }
 
 type UserInSegQueryParams struct {

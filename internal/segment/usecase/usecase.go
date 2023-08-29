@@ -39,6 +39,21 @@ func (u *SegmentUsecase) CreateSegment(params *segment.CreateSegmentParams) (*se
 	return &response, nil
 }
 
+func (u *SegmentUsecase) CreateSegmentWithAutoAdd(params *segment.CreateSegmentParams) (*segment.SegmentResponse, error) {
+
+	var response segment.SegmentResponse
+
+	if err := u.repo.CreateSegmentWithAutoAdd(params); err != nil {
+		response.ErrCode = s_constant.CreateSegmentWithAutoAddError
+		response.Success = false
+		response.Description = "error in creating segment with auto add"
+		return &response, err
+	}
+
+	response.Success = true
+	return &response, nil
+}
+
 func (u *SegmentUsecase) UpdateSegment(params *segment.UpdateSegmentParams) (*segment.SegmentResponse, error) {
 
 	var response segment.SegmentResponse

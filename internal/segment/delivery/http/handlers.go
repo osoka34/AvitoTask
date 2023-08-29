@@ -65,3 +65,23 @@ func (h *SegmentHandler) DeleteSegmentByName() fiber.Handler {
 		return ctx.JSON(toFront)
 	}
 }
+
+func (h *SegmentHandler) CreateSegmentWithAutoAdd() fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+
+		var params = segment.CreateSegmentParams{}
+
+		if err := utils.ReadRequestHeaderJson(ctx, &params); err != nil {
+			h.logger.Errorf("err is: %v", err)
+			return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+		}
+
+		toFront, err := h.uc.CreateSegmentWithAutoAdd(&params)
+		if err != nil {
+			h.logger.Errorf("err is: %v", err)
+			return ctx.Status(fiber.StatusInternalServerError).JSON(toFront)
+		}
+
+		return ctx.JSON(toFront)
+	}
+}

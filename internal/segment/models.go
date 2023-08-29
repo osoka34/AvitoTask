@@ -11,8 +11,8 @@ type GetSegmentParams struct {
 }
 
 type CreateSegmentParams struct {
-	//SegmentId   uint64 `json:"segment_id"`
-	SegmentName string `json:"segment_name"`
+	SegmentName string  `json:"segment_name"`
+	Probability float64 `json:"probability,omitempty"`
 }
 
 type UpdateSegmentParams struct {

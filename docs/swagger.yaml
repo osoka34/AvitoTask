@@ -1,0 +1,324 @@
+definitions:
+  account.CreateUserParams:
+    properties:
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  account.DeleteUserParams:
+    properties:
+      user_id:
+        type: integer
+    type: object
+  account.UserResponse:
+    properties:
+      description:
+        type: string
+      err_code:
+        type: integer
+      id:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  segment.CreateSegmentParams:
+    properties:
+      probability:
+        type: number
+      segment_name:
+        type: string
+    type: object
+  segment.DeleteSegmParams:
+    properties:
+      segment_name:
+        type: string
+    type: object
+  segment.SegmentResponse:
+    properties:
+      data: {}
+      description:
+        type: string
+      err_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  segment.UpdateSegmentParams:
+    properties:
+      new_seg_name:
+        type: string
+      segment_id:
+        type: integer
+    type: object
+  statistics.SelectParams:
+    properties:
+      date_from:
+        type: string
+      date_to:
+        type: string
+    type: object
+  statistics.StatResponse:
+    properties:
+      data: {}
+      description:
+        type: string
+      err_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  users_in_segm.SelectBy:
+    properties:
+      user_id:
+        type: integer
+    type: object
+  users_in_segm.UserInSegQueryParams:
+    properties:
+      insert:
+        type: boolean
+      segment_names:
+        items: {}
+        type: array
+      ttl:
+        items: {}
+        type: array
+      user_id:
+        type: integer
+    type: object
+  users_in_segm.UsersInSegResponse:
+    properties:
+      data: {}
+      description:
+        type: string
+      err_code:
+        type: integer
+      success:
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /segment/create:
+    post:
+      consumes:
+      - application/json
+      description: Создание сегмента по названию
+      parameters:
+      - description: '{segment_name = {your_segment_name}}'
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/segment.CreateSegmentParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success = true
+          schema:
+            $ref: '#/definitions/segment.SegmentResponse'
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/segment.SegmentResponse'
+      summary: Создать сегмент по названию
+  /segment/create_auto:
+    post:
+      consumes:
+      - application/json
+      description: Создание сегмента по названию и добавление в него всех существующих
+        аккаунтов с вероятностью из тела запроса
+      parameters:
+      - description: Параметры запроса в формате JSON c вероятностью от 0 до 1
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/segment.CreateSegmentParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success = true
+          schema:
+            $ref: '#/definitions/segment.SegmentResponse'
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/segment.SegmentResponse'
+      summary: Создать сегмент по названию и добавить в него все существующие аккаунты
+        с вероятностью из тела запроса
+  /segment/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление сегмента по названию
+      parameters:
+      - description: Параметры запроса в формате JSON
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/segment.DeleteSegmParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success = true
+          schema:
+            $ref: '#/definitions/segment.SegmentResponse'
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/segment.SegmentResponse'
+      summary: Удалить сегмент по названию
+  /segment/update:
+    patch:
+      consumes:
+      - application/json
+      description: Обновление названия сегмента по ID
+      parameters:
+      - description: '{segment_name = {new_segment_name}, segment_id : {id}}'
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/segment.UpdateSegmentParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success = true
+          schema:
+            $ref: '#/definitions/segment.SegmentResponse'
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/segment.SegmentResponse'
+      summary: Обновить название сегмента по ID
+  /statistics/csv:
+    get:
+      consumes:
+      - application/json
+      description: Получение csv файла с данными о добавлении, удалении пользователей
+        из сегментов
+      parameters:
+      - description: Параметры запроса в формате JSON, даты формата YYYY-MM
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/statistics.SelectParams'
+      responses:
+        "200":
+          description: 'CSV file : id, segment_name, operation_type(true is insert,
+            false is delete), YYYY-MM-DD'
+          schema:
+            type: string
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/statistics.StatResponse'
+      summary: Получить csv файл с данными о добавлении, удалении пользователей из
+        сегментов
+  /user/create:
+    post:
+      consumes:
+      - application/json
+      description: Создание пользователя по ID, Name
+      parameters:
+      - description: Параметры запроса в формате JSON
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/account.CreateUserParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success = true, id пользователя
+          schema:
+            $ref: '#/definitions/account.UserResponse'
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/account.UserResponse'
+      summary: Создать пользователя
+  /user/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление пользоватеял по ID
+      parameters:
+      - description: Параметры запроса в формате JSON
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/account.DeleteUserParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success = true
+          schema:
+            $ref: '#/definitions/account.UserResponse'
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/account.UserResponse'
+      summary: Удалить пользователя по ID
+  /users/query:
+    post:
+      consumes:
+      - application/json
+      description: Запрос для удаления или добавления аккаунта в сегменты
+      parameters:
+      - description: Для добавления использовать параметры запроса в формате JSON
+          с insert = true, если Ttl не нужен, указывать массив пустых строк = true,
+          для удаления insert = false, параметры запроса в формате JSON с user_id
+          и массивом segment_names
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/users_in_segm.UserInSegQueryParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success = true
+          schema:
+            $ref: '#/definitions/users_in_segm.UsersInSegResponse'
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/users_in_segm.UsersInSegResponse'
+      summary: Запрос для удаления или добавления аккаунта в сегменты
+  /users/segments:
+    get:
+      consumes:
+      - application/json
+      description: Запрос для удаления или добавления аккаунта в сегменты
+      parameters:
+      - description: Данные в формате JSON с user_id
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/users_in_segm.SelectBy'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success = true, data = массив сегментов, в которые входит пользователь
+          schema:
+            $ref: '#/definitions/users_in_segm.UsersInSegResponse'
+        "500":
+          description: success = false, описание ошибки, код ошибки
+          schema:
+            $ref: '#/definitions/users_in_segm.UsersInSegResponse'
+      summary: Запрос для удаления или добавления аккаунта в сегменты
+swagger: "2.0"

@@ -6,6 +6,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// CreateUser godoc
+// @Summary Создать пользователя
+// @Description Создание пользователя по ID, Name
+// @Accept json
+// @Produce json
+// @Param params body account.CreateUserParams true "Параметры запроса в формате JSON"
+// @Success 200 {object} account.UserResponse "success = true, id пользователя"
+// @Failure 500 {object} account.UserResponse "success = false, описание ошибки, код ошибки"
+// @Router /user/create [post]
 func (h *UserHandler) CreateUser() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 
@@ -27,6 +36,15 @@ func (h *UserHandler) CreateUser() fiber.Handler {
 	}
 }
 
+// DeleteUserById godoc
+// @Summary Удалить пользователя по ID
+// @Description Удаление пользоватеял по ID
+// @Accept json
+// @Produce json
+// @Param params body account.DeleteUserParams true "Параметры запроса в формате JSON"
+// @Success 200 {object} account.UserResponse "success = true"
+// @Failure 500 {object} account.UserResponse "success = false, описание ошибки, код ошибки"
+// @Router /user/delete [delete]
 func (h *UserHandler) DeleteUserById() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 

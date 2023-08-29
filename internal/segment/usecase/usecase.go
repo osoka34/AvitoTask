@@ -43,6 +43,13 @@ func (u *SegmentUsecase) CreateSegmentWithAutoAdd(params *segment.CreateSegmentP
 
 	var response segment.SegmentResponse
 
+	if params.Probability > 1 || params.Probability < 0 {
+		response.ErrCode = s_constant.CreateSegmentWithAutoAddError
+		response.Success = false
+		response.Description = "probability must be in range 0..1"
+		return &response, fmt.Errorf("error: %s", s_constant.CreateSegmentWithAutoAddError)
+	}
+
 	if err := u.repo.CreateSegmentWithAutoAdd(params); err != nil {
 		response.ErrCode = s_constant.CreateSegmentWithAutoAddError
 		response.Success = false

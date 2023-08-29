@@ -1,0 +1,489 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/segment/create": {
+            "post": {
+                "description": "Создание сегмента по названию",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Создать сегмент по названию",
+                "parameters": [
+                    {
+                        "description": "{segment_name = {your_segment_name}}",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/segment.CreateSegmentParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success = true",
+                        "schema": {
+                            "$ref": "#/definitions/segment.SegmentResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/segment.SegmentResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/segment/create_auto": {
+            "post": {
+                "description": "Создание сегмента по названию и добавление в него всех существующих аккаунтов с вероятностью из тела запроса",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Создать сегмент по названию и добавить в него все существующие аккаунты с вероятностью из тела запроса",
+                "parameters": [
+                    {
+                        "description": "Параметры запроса в формате JSON c вероятностью от 0 до 1",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/segment.CreateSegmentParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success = true",
+                        "schema": {
+                            "$ref": "#/definitions/segment.SegmentResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/segment.SegmentResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/segment/delete": {
+            "delete": {
+                "description": "Удаление сегмента по названию",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Удалить сегмент по названию",
+                "parameters": [
+                    {
+                        "description": "Параметры запроса в формате JSON",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/segment.DeleteSegmParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success = true",
+                        "schema": {
+                            "$ref": "#/definitions/segment.SegmentResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/segment.SegmentResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/segment/update": {
+            "patch": {
+                "description": "Обновление названия сегмента по ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Обновить название сегмента по ID",
+                "parameters": [
+                    {
+                        "description": "{segment_name = {new_segment_name}, segment_id : {id}}",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/segment.UpdateSegmentParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success = true",
+                        "schema": {
+                            "$ref": "#/definitions/segment.SegmentResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/segment.SegmentResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/csv": {
+            "get": {
+                "description": "Получение csv файла с данными о добавлении, удалении пользователей из сегментов",
+                "consumes": [
+                    "application/json"
+                ],
+                "summary": "Получить csv файл с данными о добавлении, удалении пользователей из сегментов",
+                "parameters": [
+                    {
+                        "description": "Параметры запроса в формате JSON, даты формата YYYY-MM",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/statistics.SelectParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CSV file : id, segment_name, operation_type(true is insert, false is delete), YYYY-MM-DD",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/statistics.StatResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/create": {
+            "post": {
+                "description": "Создание пользователя по ID, Name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Создать пользователя",
+                "parameters": [
+                    {
+                        "description": "Параметры запроса в формате JSON",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.CreateUserParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success = true, id пользователя",
+                        "schema": {
+                            "$ref": "#/definitions/account.UserResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/account.UserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/delete": {
+            "delete": {
+                "description": "Удаление пользоватеял по ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Удалить пользователя по ID",
+                "parameters": [
+                    {
+                        "description": "Параметры запроса в формате JSON",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.DeleteUserParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success = true",
+                        "schema": {
+                            "$ref": "#/definitions/account.UserResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/account.UserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/query": {
+            "post": {
+                "description": "Запрос для удаления или добавления аккаунта в сегменты",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Запрос для удаления или добавления аккаунта в сегменты",
+                "parameters": [
+                    {
+                        "description": "Для добавления использовать параметры запроса в формате JSON с insert = true, если Ttl не нужен, указывать массив пустых строк = true, для удаления insert = false, параметры запроса в формате JSON с user_id и массивом segment_names",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/users_in_segm.UserInSegQueryParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success = true",
+                        "schema": {
+                            "$ref": "#/definitions/users_in_segm.UsersInSegResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/users_in_segm.UsersInSegResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/segments": {
+            "get": {
+                "description": "Запрос для удаления или добавления аккаунта в сегменты",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Запрос для удаления или добавления аккаунта в сегменты",
+                "parameters": [
+                    {
+                        "description": "Данные в формате JSON с user_id",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/users_in_segm.SelectBy"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success = true, data = массив сегментов, в которые входит пользователь",
+                        "schema": {
+                            "$ref": "#/definitions/users_in_segm.UsersInSegResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "success = false, описание ошибки, код ошибки",
+                        "schema": {
+                            "$ref": "#/definitions/users_in_segm.UsersInSegResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "account.CreateUserParams": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "account.DeleteUserParams": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "account.UserResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "err_code": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "segment.CreateSegmentParams": {
+            "type": "object",
+            "properties": {
+                "probability": {
+                    "type": "number"
+                },
+                "segment_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "segment.DeleteSegmParams": {
+            "type": "object",
+            "properties": {
+                "segment_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "segment.SegmentResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "description": {
+                    "type": "string"
+                },
+                "err_code": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "segment.UpdateSegmentParams": {
+            "type": "object",
+            "properties": {
+                "new_seg_name": {
+                    "type": "string"
+                },
+                "segment_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "statistics.SelectParams": {
+            "type": "object",
+            "properties": {
+                "date_from": {
+                    "type": "string"
+                },
+                "date_to": {
+                    "type": "string"
+                }
+            }
+        },
+        "statistics.StatResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "description": {
+                    "type": "string"
+                },
+                "err_code": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "users_in_segm.SelectBy": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "users_in_segm.UserInSegQueryParams": {
+            "type": "object",
+            "properties": {
+                "insert": {
+                    "type": "boolean"
+                },
+                "segment_names": {
+                    "type": "array",
+                    "items": {}
+                },
+                "ttl": {
+                    "type": "array",
+                    "items": {}
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "users_in_segm.UsersInSegResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "description": {
+                    "type": "string"
+                },
+                "err_code": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}

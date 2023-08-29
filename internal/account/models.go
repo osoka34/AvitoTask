@@ -10,8 +10,8 @@ type DeleteUserParams struct {
 }
 
 type UserResponse struct {
-	Data        interface{} `json:"data,omitempty"`
-	Success     bool        `json:"success"`
-	Description string      `json:"description,omitempty"`
-	ErrCode     uint16      `json:"err_code,omitempty"`
+	Data        uint64 `json:"id,omitempty"`
+	Success     bool   `json:"success"`
+	Description string `json:"description,omitempty"`
+	ErrCode     uint16 `json:"err_code,omitempty"`
 }

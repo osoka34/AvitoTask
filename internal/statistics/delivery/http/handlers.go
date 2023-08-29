@@ -7,6 +7,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// GetCsv godoc
+// @Summary Получить csv файл с данными о добавлении, удалении пользователей из сегментов
+// @Description Получение csv файла с данными о добавлении, удалении пользователей из сегментов
+// @Accept json
+// @ContentType csv
+// @Param params body statistics.SelectParams true "Параметры запроса в формате JSON, даты формата YYYY-MM"
+// @Success 200 {object} string "CSV file : id, segment_name, operation_type(true is insert, false is delete), YYYY-MM-DD"
+// @Failure 500 {object} statistics.StatResponse "success = false, описание ошибки, код ошибки"
+// @Router /statistics/csv [get]
 func (h *StatHandler) GetCsv() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		var params = statistics.SelectParams{}

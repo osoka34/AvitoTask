@@ -2,6 +2,7 @@ package httpServer
 
 import (
 	"AvitoTask/config"
+	"context"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
@@ -21,8 +22,8 @@ func NewServer(cfg *config.Config, logger *zap.SugaredLogger) *Server {
 	}
 }
 
-func (s *Server) Run() error {
-	if err := s.MapHandlers(s.fiber, s.logger); err != nil {
+func (s *Server) Run(ctx context.Context) error {
+	if err := s.MapHandlers(ctx, s.fiber, s.logger); err != nil {
 		s.logger.Fatal(fmt.Sprintf("Cannot map handlers. Error: {%s}", err))
 	}
 

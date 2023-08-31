@@ -9,6 +9,7 @@ import (
 	segmentRepository "AvitoTask/internal/segment/repository"
 	segmentUsecase "AvitoTask/internal/segment/usecase"
 	"AvitoTask/pkg/storage"
+	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -27,7 +28,7 @@ import (
 	statUsecase "AvitoTask/internal/statistics/usecase"
 )
 
-func (s *Server) MapHandlers(app *fiber.App, logger *zap.SugaredLogger) error {
+func (s *Server) MapHandlers(ctx context.Context, app *fiber.App, logger *zap.SugaredLogger) error {
 
 	db, err := storage.InitPsqlDB(s.cfg)
 	if err != nil {
@@ -84,21 +85,31 @@ func (s *Server) MapHandlers(app *fiber.App, logger *zap.SugaredLogger) error {
 
 	// -------------------------------------------------------------------------------------
 
-	go func() {
+	go func(ctx context.Context) {
+
+		ctx, cancel := context.WithCancel(ctx)
+
 		for {
-			toDelete, err := usersInSegUC.CountUsersWithExpiredTtl()
-			if err != nil {
+			select {
+			case <-ctx.Done():
+				logger.Error("error in goroutine with deleting by ttl")
 				return
-			}
-			if toDelete {
-				err = usersInSegUC.DeleteByTtl()
+			default:
+				toDelete, err := usersInSegUC.CountUsersWithExpiredTtl()
 				if err != nil {
-					return
+					cancel()
+					continue
 				}
+				if toDelete {
+					err = usersInSegUC.DeleteByTtl()
+					if err != nil {
+						cancel()
+					}
+				}
+				time.Sleep(time.Minute * s_constant.DelayForDeleteByTtl)
 			}
-			time.Sleep(time.Minute * s_constant.DelayForDeleteByTtl)
 		}
-	}()
+	}(ctx)
 
 	return nil
 }

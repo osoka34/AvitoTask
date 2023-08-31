@@ -9,7 +9,159 @@
 **filePath**: "/Users/alexander/GolandProjects/AvitoTask/logs/data.csv".
 5. Скомпилировать и запустить проект из папки cmd.
 
+#### Описание http ручек
+
+**Создание сегмента по названию**
+
+POST 0.0.0.0:11000/segment/create
+````json
+{
+    "segment_name": "Segment F"
+}
+````
+
+Response 200
+````json
+{
+    "data": "Segment F",
+    "success": true
+}
+````
+
+
+**Удаление сегмента по названию**
+
+DELETE 0.0.0.0:11000/segment/delete
+````json
+{
+    "segment_name" : "Segment F"
+}
+````
+
+Response 200
+````json
+{
+    "success": true
+}
+````
+
+**Обновление названия сегмента по id**
+
+PATCH 0.0.0.0:11000/segment/update
+````json
+{
+"segment_id" : 1,
+"new_seg_name": "segment G"
+}
+````
+
+Response 200
+````json
+{
+    "success": true
+}
+````
+
+**Создание пользователя**
+
+POST 0.0.0.0:11000/user/create
+````json
+{   
+    "user_id" : 100,
+    "user_name" : "user A"
+}
+````
+
+Response 200
+````json
+{
+    "id": 100,
+    "success": true
+}
+````
+
+**Удаление пользователя**
+
+DELETE 0.0.0.0:11000/user/delete
+````json
+{   
+    "user_id" : 100,
+}
+````
+
+Response 200
+````json
+{
+    "success": true
+}
+````
+
+**Добавление пользователя в сегменты с ttl (если ttl не нужен, указываем пустую строку "")**
+
+POST 0.0.0.0:11000/users/query
+
+````json
+{
+    "user_id": 1,
+    "ttl": ["2023-08-28", "2023-08-28", "2023-08-28"],
+    "segment_names": [ "Segment X", "Segment Y", "Segment Z" ],
+    "insert":true
+}
+````
+
+Response 200
+````json
+{
+    "success": true
+}
+````
+
+**Удаление пользователя из сегментов**
+
+POST 0.0.0.0:11000/users/query
+
+````json
+{
+    "user_id": 1,
+    "segment_names": [ "Segment X", "Segment Y", "Segment Z" ],
+    "insert":false
+}
+````
+
+Response 200
+````json
+{
+    "success": true
+}
+````
+
+**Получение сегментов, в которых состоит пользователь**
+
+GET 0.0.0.0:11000/users/segments
+
+````json
+{
+    "user_id": 1
+}
+````
+
+Response 200
+````json
+{
+    "data": [
+        "SEG G",
+        "Segment J",
+        "Segment J"
+    ],
+    "success": true
+}
+````
+
 ### Все описания ручек можно найти в swagger
+
+GET 0.0.0.0:11000/swagger/*
+
+
 
 #### Дополнительные задания
 1. CSV файл с отчетами  
@@ -20,7 +172,6 @@ GET 0.0.0.0:11000/statistics/csv
     "date_from":"2023-07",
     "date_to":"2023-08"
 }
-
 ````
 
 Response 200
@@ -55,7 +206,9 @@ Response 200
 ````
 
 
-#### TODO list исправления очевидных проблем
+
+
+### TODO list исправления очевидных проблем
 1. Передача одних и тех же структур из хендлера в репо handler -> usecase -> repository. На уровне usecase надо делать валидацию, создавать новую структуру и передавать в репозиторий. Для тестового сойдет, но для запуска в прод надо бы переделать.
 2. Добавить контексты с таймаутом для обращения в бд.
 3. Отслеживать TTL через брокер сообщений, например кафка, при добавлении пользователя в сегмент с ttl записывать его туда, а потом читать, когда потребуется.

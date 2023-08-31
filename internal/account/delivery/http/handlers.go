@@ -24,7 +24,6 @@ func (h *UserHandler) CreateUser() fiber.Handler {
 			h.logger.Errorf("err is: %v", err)
 			return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
 		}
-		h.logger.Info(params)
 
 		toFront, err := h.uc.CreateUser(&params)
 		if err != nil {

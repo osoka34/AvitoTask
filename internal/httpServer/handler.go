@@ -11,7 +11,6 @@ import (
 	"AvitoTask/pkg/storage"
 	"context"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	serverLogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -32,7 +31,6 @@ func (s *Server) MapHandlers(ctx context.Context, app *fiber.App, logger *zap.Su
 
 	db, err := storage.InitPsqlDB(s.cfg)
 	if err != nil {
-		log.Info(err)
 		logger.Fatalf("err is: %v", err)
 	}
 
